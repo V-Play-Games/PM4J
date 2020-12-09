@@ -16,6 +16,7 @@
 package com.vplaygames.PM4J.caches;
 
 import com.vplaygames.PM4J.caches.framework.DownloadedCache;
+import com.vplaygames.PM4J.caches.framework.ProcessedCache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +25,48 @@ import static com.vplaygames.PM4J.Logger.Mode.INFO;
 import static com.vplaygames.PM4J.Logger.log;
 import static com.vplaygames.PM4J.util.MiscUtil.*;
 
+/**
+ * Represents a Cache of any type of Data in Pokemon Masters (Pokemon, Moves, Skills, Trainers).
+ * This class uses {@link com.vplaygames.PM4J.Logger} to log details of the processes.
+ * Usage example:-
+ * <pre><code>
+ *     try {
+ *         PokemasDBCache.initialize();
+ *     } catch (Exception e) {
+ *         e.printStackTrace();
+ *     }
+ *     PokemasDBCache pmdc = PokemasDBCache.getInstance();
+ *     if (pmdc != null) {
+ *         // use the object
+ *     } else {
+ *         System.out.println("Data not initialized yet");
+ *     }
+ * </code></pre>
+ * This class is a Singleton Class, which means it can only be initialized once.
+ * The instance is returned by the {@link #getInstance()} method.
+ * This Cache caches the data in a {@link com.vplaygames.PM4J.caches.framework.Cache} which is an
+ * inheritor of HashMap. This class also provides other details such as downloading time and processing time.
+ * See {@link ProcessedCache} for more information.
+ *
+ * To use this class's Singleton Instance, you have to first initialize it
+ * using any of the following methods:
+ * <ol>
+ *     <li>{@link #initialize()}</li>
+ *     <li>{@link #initialize(boolean)}</li>
+ *     <li>{@link #initialize(boolean, boolean)}</li>
+ * </ol>
+ * Calling any of the methods will initialize the Singleton Instance.
+ * Note: This Instance can be Re-Initialize to refresh data from <a href="https://www.pokemasdb.com/">PokemasDB</a>
+ * which can be done by calling the {@link #forceReinitialize(boolean, boolean)}.
+ * Calling the {@link #forceReinitialize(boolean, boolean)} method will result in re-initialization of all the other
+ * caches ({@link TrainerDataCache}, {@link PokemonDataCache}, {@link MoveDataCache}, {@link SkillDataCache})
+ *
+ * @author Vaibhav Nargwani
+ * @since 1.0.0
+ * @see com.vplaygames.PM4J.caches.framework.Cache
+ * @see com.vplaygames.PM4J.caches.framework.ProcessedCache
+ * @see java.util.HashMap
+ */
 public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
     private static volatile PokemasDBCache instance;
     private static volatile boolean initializing = false;
@@ -70,30 +113,54 @@ public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
         initialized = true;
     }
 
+    /**
+     * Returns the Singleton Instance, which is null if not initialized
+     *
+     * @return the Singleton Instance, which is null if not initialized
+     */
     public static PokemasDBCache getInstance() {
         return instance;
     }
 
+    /**
+     * Initializes the Singleton Instance, logs any processes
+     * and does not create a new Thread for the process
+     */
     public static void initialize() {
         if (!initialized)
             initialize(true);
     }
 
+    /**
+     * Initializes the Singleton Instance,
+     * logs any processes if the {@code log} parameter is {@code true}
+     * and does not create a new Thread for the process
+     *
+     * @param log to log processes or not
+     */
     public static void initialize(boolean log) {
         if (!initialized)
             initialize(log, false);
     }
 
+    /**
+     * Initializes the Singleton Instance,
+     * logs any processes if the {@code log} parameter is {@code true}
+     * and creates a new Thread for the process if the {@code runInParallel} parameter is {@code true}
+     *
+     * @param log to log processes or not
+     * @param runInParallel to create a new Thread for the process or not
+     */
     public static void initialize(boolean log, boolean runInParallel) {
         if (!initialized)
-        initialize(log, runInParallel, false);
+            initialize(log, runInParallel, false);
     }
 
     private static void initialize(boolean log, boolean runInParallel, boolean isForced) {
         if (initialized || initializing) return;
         try {
             if (runInParallel)
-                new Thread(() -> PokemasDBCache.initialize0(log, isForced),"PM4J-Cache").start();
+                new Thread(() -> PokemasDBCache.initialize0(log, isForced), "PM4J-Cache").start();
             else
                 initialize0(log, isForced);
         } catch (Throwable t) {
@@ -103,6 +170,14 @@ public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
         }
     }
 
+    /**
+     * Re-Initializes the Singleton Instance,
+     * logs any processes if the {@code log} parameter is {@code true}
+     * and creates a new Thread for the process if the {@code runInParallel} parameter is {@code true}
+     *
+     * @param log to log processes or not
+     * @param runInParallel to create a new Thread for the process or not
+     */
     public static void forceReinitialize(boolean log, boolean runInParallel) {
         initializing = false;
         initialized = false;
@@ -114,17 +189,18 @@ public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
             instance = new PokemasDBCache(log, isForced);
     }
 
-    private <V> void process(HashMap<String,V> map) {
+    private <V> void process(HashMap<String, V> map) {
         map.forEach((k, v) -> {
             Node node;
             if (containsKey(k))
                 node = get(k);
             else
                 node = new Node();
-            put(k,node.add(v));
+            put(k, node.add(v));
         });
     }
 
+    /** Data nod for this cache */
     public static class Node {
         ArrayList<Object> data = new ArrayList<>();
 
@@ -133,6 +209,11 @@ public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
             return this;
         }
 
+        /**
+         * Returns the data values
+         *
+         * @return the data values
+         */
         public Object[] getData() {
             return data.toArray();
         }

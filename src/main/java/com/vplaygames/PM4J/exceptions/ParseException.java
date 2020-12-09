@@ -15,6 +15,13 @@
  */
 package com.vplaygames.PM4J.exceptions;
 
+/**
+ * This Exception is thrown while parsing a JSON object
+ * indicating that the Parsing was unsuccessful
+ *
+ * @since 1.0.0
+ * @author Vaibhav Nargwani
+ */
 public class ParseException extends RuntimeException
 {
     public ParseException() {

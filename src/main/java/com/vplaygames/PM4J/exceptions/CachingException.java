@@ -15,26 +15,15 @@
  */
 package com.vplaygames.PM4J.exceptions;
 
+/**
+ * This Exception is thrown while caching data available online to a local
+ * variable for future uses indicating that the Caching was unsuccessful
+ *
+ * @since 1.0.0
+ * @author Vaibhav Nargwani
+ */
 public class CachingException extends RuntimeException {
-    public CachingException() {
-        super();
-    }
-
-    public CachingException(String message) {
-        super(message);
-    }
-
-    public CachingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public CachingException(Throwable cause) {
         super(cause);
-    }
-
-    protected CachingException(String message, Throwable cause,
-                               boolean enableSuppression,
-                               boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -15,8 +15,18 @@
  */
 package com.vplaygames.PM4J.exceptions;
 
+import com.vplaygames.PM4J.entities.Constants;
+
+/**
+ * This Exception is thrown while getting a trainer's data
+ * indicating that either the data was not available,
+ * or a problem occurred while getting it from the Internet.
+ *
+ * @since 1.0.0
+ * @author Vaibhav Nargwani
+ */
 public class TrainerNotFoundException extends RuntimeException {
     public TrainerNotFoundException(int code, String trainer) {
-        super("Error " + code + " was returned from http://pokemasdb.com/trainer/" + trainer);
+        super("Error Code " + code + " was returned from " + Constants.TRAINER_ENDPOINT_URL + trainer);
     }
 }

@@ -24,20 +24,48 @@ import org.json.simple.JSONObject;
 
 import static com.vplaygames.PM4J.entities.Constants.*;
 
+/**
+ * Represents a Pokemon in Pokemon Masters, which has formed a Sync Pair with a trainer.
+ * <br>All of this class's variables are {@code public final} i.e. available without the use of getters
+ * but not assignable.
+ * <br>This class implements the {@link ParsableJSONObject} interface, which means that it can be parsed
+ * and stored into a {@link com.vplaygames.PM4J.jsonFramework.JSONArray} and can be converted into a JSON String.
+ *
+ * @since 1.0
+ * @author Vaibhav Nargwani
+ *
+ * @see com.vplaygames.PM4J.jsonFramework.ParsableJSONObject
+ * @see com.vplaygames.PM4J.jsonFramework.JSONArray
+ * @see com.vplaygames.PM4J.entities.AbstractMove
+ * @see SyncMove
+ */
 public class Pokemon implements ParsableJSONObject<Pokemon>
 {
+    /** The name of this Pokemon */
     public final String name;
+    /** The name of the Trainer of this Pokemon */
     public final String trainer;
+    /** The typing of this Pokemon */
     protected final String[] typing;
+    /** The weakness of this Pokemon */
     public final String weakness;
+    /** The role of this Pokemon [Strike (Special/Physical)/Support/Tech */
     public final String role;
+    /** The rarity of this Pokemon (in no. of Stars) */
     public final int rarity;
+    /** The gender of this Pokemon */
     public final String gender;
+    /** The name of other forms this Pokemon */
     protected final String[] otherForms;
+    /** The moves of this Pokemon */
     public final JSONArray<Move> moves;
+    /** The Sync Move of this Pokemon */
     public final SyncMove syncMove;
+    /** The Passive Skills of this Pokemon */
     public final JSONArray<Passive> passives;
+    /** The Stats of this Pokemon */
     public final StatRange stats;
+    /** The Sync Grid of this Pokemon */
     public final JSONArray<SyncGridNode> grid;
 
     public Pokemon(String name, String trainer,
@@ -61,10 +89,20 @@ public class Pokemon implements ParsableJSONObject<Pokemon>
         this.grid = grid.initialized();
     }
 
+    /**
+     * The Array of the names of Other forms of this Pokemon
+     *
+     * @return a deep copy of The Array of the names of Other forms of this Pokemon
+     */
     public String[] getOtherForms() {
         return otherForms;
     }
 
+    /**
+     * The Array of the typing of this Pokemon
+     *
+     * @return a deep copy of The Array of the typing of this Pokemon
+     */
     public String[] getTyping() {
         return typing;
     }
@@ -94,14 +132,35 @@ public class Pokemon implements ParsableJSONObject<Pokemon>
     }
 
     @Override
-    public Pokemon parseFromJSON(JSONObject jo) {
-        return parse(jo);
+    public Pokemon parseFromJSON(String JSON) {
+        return parse(JSON);
     }
 
+    /**
+     * Parses the given <code>String</code> to a Pokemon.
+     *
+     * @param json The JSON String to be parsed.
+     *
+     * @return The Pokemon object parsed from the JSON String.
+     *
+     * @throws com.vplaygames.PM4J.exceptions.ParseException If the JSON String was incorrectly formatted.
+     * @throws ClassCastException if the required value was unable to be cast into the desired type.
+     * @throws NullPointerException if the required values were not present in the String.
+     */
     public static Pokemon parse(String json) {
         return parse(MiscUtil.parseJSONObject(json));
     }
 
+    /**
+     * Parses the given {@link JSONObject} to a Pokemon.
+     *
+     * @param jo The {@link JSONObject} to be parsed.
+     *
+     * @return The Pokemon object parsed from the JSON String.
+     *
+     * @throws ClassCastException if the required value was unable to be cast into the desired type.
+     * @throws NullPointerException if the required values were not present in the {@link JSONObject}.
+     */
     public static Pokemon parse(JSONObject jo) {
         String name                  = (String) jo.get("name");
         String trainer               = (String) jo.get("trainer");
