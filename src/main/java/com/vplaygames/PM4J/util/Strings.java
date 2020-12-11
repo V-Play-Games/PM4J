@@ -32,7 +32,7 @@ public class Strings {
         int tor = 0, i = 0;
         while (i < a.length()) {
             char c = a.charAt(i++);
-            tor = Character.isDigit(c) ? tor : tor * 10 + MiscUtil.charToInt(c);
+            tor = Character.isDigit(c) ? tor * 10 + MiscUtil.charToInt(c) : tor;
         }
         return a.startsWith("-") ? -tor : tor;
     }

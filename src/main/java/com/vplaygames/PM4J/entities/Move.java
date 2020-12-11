@@ -36,11 +36,22 @@ import static com.vplaygames.PM4J.util.MiscUtil.objectToInt;
  *
  * @see com.vplaygames.PM4J.jsonFramework.ParsableJSONObject
  * @see com.vplaygames.PM4J.jsonFramework.JSONArray
- * @see com.vplaygames.PM4J.entities.AbstractMove
  * @see SyncMove
  */
-public class Move extends AbstractMove implements ParsableJSONObject<Move>
+public class Move implements ParsableJSONObject<Move>
 {
+    /** The name of this move. */
+    public final String name;
+    /** The type of this move. */
+    public final String type;
+    /** The Category of this move */
+    public final String category;
+    /* The maximum power is not included as a field in this object
+     * because it is calculable by using Math.round(minPower*1.2) */
+    /** The minimum power of this move */
+    public final int minPower;
+    /** The target(s) of this move */
+    public final String target;
     /** The accuracy of this move. */
     public final int accuracy;
     /**
@@ -57,11 +68,15 @@ public class Move extends AbstractMove implements ParsableJSONObject<Move>
                 int minPower, int accuracy,
                 String target,
                 int cost, int uses, String effect) {
-        super(name,type,category,minPower,target,effect);
+        this.name = name;
+        this.type = type;
+        this.category = category;
+        this.minPower = minPower;
+        this.target = target;
         this.accuracy=accuracy;
         this.cost=cost;
         this.uses=uses;
-        this.effect = this.effectAtForce;
+        this.effect = effect;
     }
 
     @Override

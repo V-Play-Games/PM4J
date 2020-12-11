@@ -53,7 +53,7 @@ public class Trainer implements ParsableJSONObject<Trainer> {
 
     public Trainer(String name, int rarity, String[] pokemon) {
         this.name = name;
-        this.rarity = rarity;
+        this.rarity = rarity == 0 ? 1 : rarity;
         this.img = "https://pokemasdb.com/trainer/image/" + resolve(name) + ".png";
         this.data = "https://pokemasdb.com/trainer/" + resolve(name);
         this.pokemon = pokemon;

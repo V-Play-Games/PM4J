@@ -36,7 +36,6 @@ import static com.vplaygames.PM4J.entities.Constants.*;
  *
  * @see com.vplaygames.PM4J.jsonFramework.ParsableJSONObject
  * @see com.vplaygames.PM4J.jsonFramework.JSONArray
- * @see com.vplaygames.PM4J.entities.AbstractMove
  * @see SyncMove
  */
 public class Pokemon implements ParsableJSONObject<Pokemon>

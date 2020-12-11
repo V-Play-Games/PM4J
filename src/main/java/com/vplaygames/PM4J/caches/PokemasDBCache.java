@@ -18,9 +18,6 @@ package com.vplaygames.PM4J.caches;
 import com.vplaygames.PM4J.caches.framework.DownloadedCache;
 import com.vplaygames.PM4J.caches.framework.ProcessedCache;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import static com.vplaygames.PM4J.Logger.Mode.INFO;
 import static com.vplaygames.PM4J.Logger.log;
 import static com.vplaygames.PM4J.util.MiscUtil.*;
@@ -67,7 +64,7 @@ import static com.vplaygames.PM4J.util.MiscUtil.*;
  * @see com.vplaygames.PM4J.caches.framework.ProcessedCache
  * @see java.util.HashMap
  */
-public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
+public class PokemasDBCache extends DownloadedCache<Object> {
     private static volatile PokemasDBCache instance;
     private static volatile boolean initializing = false;
     private static volatile boolean initialized = false;
@@ -89,10 +86,10 @@ public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
             mdc = MoveDataCache.getInstance(log);
             sdc = SkillDataCache.getInstance(log);
         }
-        process(tdc);
-        process(pdc);
-        process(mdc);
-        process(sdc);
+        putAll(tdc);
+        putAll(pdc);
+        putAll(mdc);
+        putAll(sdc);
         totalDownloaded = tdc.getTotalDownloaded();
         downloadingTime = tdc.getDownloadingTime();
         totalProcessed = tdc.getTotalProcessed();
@@ -187,35 +184,5 @@ public class PokemasDBCache extends DownloadedCache<PokemasDBCache.Node> {
     private static void initialize0(boolean log, boolean isForced) {
         if (instance == null)
             instance = new PokemasDBCache(log, isForced);
-    }
-
-    private <V> void process(HashMap<String, V> map) {
-        map.forEach((k, v) -> {
-            Node node;
-            if (containsKey(k))
-                node = get(k);
-            else
-                node = new Node();
-            put(k, node.add(v));
-        });
-    }
-
-    /** Data nod for this cache */
-    public static class Node {
-        ArrayList<Object> data = new ArrayList<>();
-
-        Node add(Object o) {
-            data.add(o);
-            return this;
-        }
-
-        /**
-         * Returns the data values
-         *
-         * @return the data values
-         */
-        public Object[] getData() {
-            return data.toArray();
-        }
     }
 }

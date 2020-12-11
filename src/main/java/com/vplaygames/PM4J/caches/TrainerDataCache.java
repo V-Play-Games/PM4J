@@ -103,7 +103,6 @@ public class TrainerDataCache extends DownloadedCache<Trainer> {
             }
             totalProcessed = 0;
             i = 0;
-            trainers = new JSONArray<>(0, Constants.EMPTY_TRAINER);
             while (i < len) {
                 temp = currentTimeMillis();
                 String name = trainers.get(i).name;

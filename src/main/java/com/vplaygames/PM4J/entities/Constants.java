@@ -36,16 +36,16 @@ public class Constants {
     public static final Move EMPTY_MOVE = Move.emptyMove();
     /** Represents an empty valued {@link Passive Passive Skill} object */
     public static final Passive EMPTY_PASSIVE = Passive.emptyPassive();
-    /** Represents an empty valued {@link Pokemon Pokemon} object */
-    public static final Pokemon EMPTY_POKEMON = Pokemon.emptyPokemon();
-    /** Represents an empty valued {@link StatRange StatRange} object */
-    public static final StatRange EMPTY_STAT_RANGE = StatRange.emptyStatRange();
     /** Represents an empty valued {@link Stats Stats} object */
     public static final Stats EMPTY_STATS = Stats.emptyStats();
+    /** Represents an empty valued {@link StatRange StatRange} object */
+    public static final StatRange EMPTY_STAT_RANGE = StatRange.emptyStatRange();
     /** Represents an empty valued {@link SyncGridNode Sync Grid Node} object */
     public static final SyncGridNode EMPTY_SYNC_GRID_NODE = SyncGridNode.emptySyncGridNode();
     /** Represents an empty valued {@link SyncMove Sync Move} object */
     public static final SyncMove EMPTY_SYNC_MOVE = SyncMove.emptySyncMove();
+    /** Represents an empty valued {@link Pokemon Pokemon} object */
+    public static final Pokemon EMPTY_POKEMON = Pokemon.emptyPokemon();
     /** Represents an empty valued {@link Trainer Trainer} object */
     public static final Trainer EMPTY_TRAINER = Trainer.emptyTrainer();
     /** The URL of the <a href="https://www.pokemasdb.com/">PokemasDB Homepage</a> */

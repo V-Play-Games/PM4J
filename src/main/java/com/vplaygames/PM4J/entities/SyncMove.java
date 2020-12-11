@@ -35,8 +35,20 @@ import java.util.HashMap;
  * @see com.vplaygames.PM4J.jsonFramework.ParsableJSONObject
  * @see com.vplaygames.PM4J.jsonFramework.JSONArray
  */
-public class SyncMove extends AbstractMove implements ParsableJSONObject<SyncMove>
+public class SyncMove implements ParsableJSONObject<SyncMove>
 {
+    /** The name of this move. */
+    public final String name;
+    /** The type of this move. */
+    public final String type;
+    /** The Category of this move */
+    public final String category;
+    /* The maximum power is not included as a field in this object
+     * because it is calculable by using Math.round(minPower*1.2) */
+    /** The minimum power of this move */
+    public final int minPower;
+    /** The target(s) of this move */
+    public final String target;
     /** The effect tag of this move. */
     public final String effectTag; //a public copy of effectAtForce of AbstractMove
     /** The additional effect(s) of this move apart from dealing damage. */
@@ -45,9 +57,13 @@ public class SyncMove extends AbstractMove implements ParsableJSONObject<SyncMov
     public SyncMove(String name, String type, String category,
                     int minPower,
                     String target, String effectTag, String description) {
-        super(name,type,category,minPower,target,effectTag);
+        this.name = name;
+        this.type = type;
+        this.category = category;
+        this.minPower = minPower;
+        this.target = target;
         this.description=description;
-        this.effectTag=this.effectAtForce;
+        this.effectTag=effectTag;
     }
 
     @Override
