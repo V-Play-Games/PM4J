@@ -262,7 +262,7 @@ Note:- Other caches cannot be re-initialized directly, this is the only way to r
   1. [`initialize()`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L125)
   2. [`initialize(boolean)`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L134)
   3. [`initialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L146)
-* The cache can be re-initialized by using the [`forceReinitialized(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L116)
+* The cache can be re-initialized by using the [`forceReinitialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L173)
 
 **Example**
 ```java
