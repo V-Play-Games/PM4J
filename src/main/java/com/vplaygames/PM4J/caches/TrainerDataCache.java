@@ -19,7 +19,6 @@ import com.vplaygames.PM4J.Connection;
 import com.vplaygames.PM4J.caches.framework.DownloadedCache;
 import com.vplaygames.PM4J.entities.Constants;
 import com.vplaygames.PM4J.entities.Trainer;
-import com.vplaygames.PM4J.entities.TrainerData;
 import com.vplaygames.PM4J.exceptions.CachingException;
 import com.vplaygames.PM4J.jsonFramework.JSONArray;
 import com.vplaygames.PM4J.util.Array;
@@ -35,17 +34,44 @@ import static com.vplaygames.PM4J.Logger.log;
 import static com.vplaygames.PM4J.util.MiscUtil.*;
 import static java.lang.System.currentTimeMillis;
 
-public class TrainerDataCache extends DownloadedCache<TrainerData> {
+/**
+ * Represents a Cache of all the Data of all the Trainers and their respective Pokemon.
+ * This class uses {@link com.vplaygames.PM4J.Logger} to log details of the
+ * downloads and processes.
+ * Usage example:-
+ * <pre><code>
+ *     TrainerDataCache tdc;
+ *     try {
+ *         tdc = TrainerDataCache.getInstance();
+ *     } catch (Exception e) {
+ *         e.printStackTrace();
+ *     }
+ *     if (tdc != null) {
+ *         // use the object
+ *     } else {
+ *         System.out.println("Data not initialized yet");
+ *     }
+ * </code></pre>
+ * This class is a Singleton Class, which means it can only be initialized once.
+ * The instance is returned by the {@link #getInstance()} and {@link #getInstance(boolean)} methods.
+ * This Cache caches the data in a {@link com.vplaygames.PM4J.caches.framework.Cache} which is an
+ * inheritor of HashMap. This class also provides other details such as downloading and processing time.
+ * See {@link DownloadedCache} for more information.
+ *
+ * @author Vaibhav Nargwani
+ * @since 1.0.0
+ * @see com.vplaygames.PM4J.caches.framework.Cache
+ * @see com.vplaygames.PM4J.caches.framework.DownloadedCache
+ * @see java.util.HashMap
+ */
+public class TrainerDataCache extends DownloadedCache<Trainer> {
     private static volatile TrainerDataCache instance;
-
-    public final JSONArray<Trainer> TrainerCache;
-    public final JSONArray<TrainerData> DataCache;
 
     private TrainerDataCache(boolean log) throws CachingException {
         try {
             Class<?> clazz = getClass();
             long temp = currentTimeMillis();
-            log("Commencing the download & parse of data from https://pokemasdb.com\n", INFO, clazz);
+            log("Commencing the download and parse of data from https://pokemasdb.com\n", INFO, clazz);
             Connection conn = new Connection();
             log("Downloading the list of trainers.\n", DEBUG, clazz, log);
             processingTime = currentTimeMillis();
@@ -53,12 +79,12 @@ public class TrainerDataCache extends DownloadedCache<TrainerData> {
             downloadingTime = currentTimeMillis();
             log("Downloaded the list of all trainers.\n", INFO, clazz, log);
             String toPrint = log("Downloading Trainer Data.", DEBUG, clazz, log);
-            TrainerCache = JSONArray.parse(
+            JSONArray<Trainer> trainers = JSONArray.parse(
                     (org.json.simple.JSONArray) ((JSONObject) new JSONParser().parse(tcache)).get("trainers"),
                     Constants.EMPTY_TRAINER);
             temp = (currentTimeMillis() - downloadingTime) + (processingTime - temp);
             downloadingTime = downloadingTime - processingTime;
-            int len = TrainerCache.size();
+            int len = trainers.size();
             int maxNameLen = 12;
             int i = 0;
             downloaded(tcache.length());
@@ -66,7 +92,7 @@ public class TrainerDataCache extends DownloadedCache<TrainerData> {
             processingTime = temp;
             while (i < len) {
                 temp = currentTimeMillis();
-                String name = TrainerCache.get(i).name;
+                String name = trainers.get(i).name;
                 localDataCache[i] = conn.requestTrainer(name);
                 processed(localDataCache[i].length());
                 downloadingTime += (currentTimeMillis() - temp);
@@ -77,14 +103,13 @@ public class TrainerDataCache extends DownloadedCache<TrainerData> {
             }
             totalProcessed = 0;
             i = 0;
-            DataCache = new JSONArray<>(0, Constants.EMPTY_TRAINER_DATA);
             while (i < len) {
                 temp = currentTimeMillis();
-                String name = TrainerCache.get(i).name;
+                String name = trainers.get(i).name;
                 String json = localDataCache[i];
-                TrainerData datum;
-                datum = TrainerData.parse(json);
-                DataCache.add(datum);
+                Trainer datum;
+                datum = Trainer.parse(json);
+                trainers.add(datum);
                 this.put(name, datum);
                 processed(json.length());
                 processingTime += currentTimeMillis() - temp;
@@ -98,8 +123,6 @@ public class TrainerDataCache extends DownloadedCache<TrainerData> {
                 log("Parsed data for all the trainers.\n", INFO, clazz);
             }
             totalProcessed = totalDownloaded = tcache.length() + Array.toString("", localDataCache, "").length();
-            TrainerCache.initialized();
-            DataCache.initialized();
             conn.close();
         } catch (IOException | ParseException exc) {
             if (log) System.out.println();
@@ -107,10 +130,23 @@ public class TrainerDataCache extends DownloadedCache<TrainerData> {
         }
     }
 
+    /**
+     * Returns the Singleton Instance and logs any processes
+     *
+     * @return the Singleton Instance and logs any processes
+     */
     public static TrainerDataCache getInstance() {
         return getInstance(true);
     }
 
+    /**
+     * Returns the Singleton Instance and logs any processes if the parameter passed is true
+     *
+     * @param log to log processes or not
+     *            Note:- if this is true, the method takes the monitor of {@code System.out}
+     *            So, any other threads waiting on that monitor will be put to sleep
+     * @return the Singleton Instance and logs any processes if the parameter passed is true
+     */
     public static TrainerDataCache getInstance(boolean log) {
         if (log) {
             synchronized (System.out) {

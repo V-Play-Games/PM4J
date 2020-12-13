@@ -15,9 +15,16 @@
  */
 package com.vplaygames.PM4J.exceptions;
 
+/**
+ * This Exception is thrown while running a request to a server
+ * indicating that the connection was closed
+ *
+ * @since 1.0.0
+ * @author Vaibhav Nargwani
+ */
 public class ConnectionClosedException extends IllegalStateException
 {
-    public ConnectionClosedException(String method) {
-        super("Cannot perform "+method+"() because the connection has been closed!");
+    public ConnectionClosedException() {
+        super("Cannot process the request because the connection has been closed!");
     }
 }

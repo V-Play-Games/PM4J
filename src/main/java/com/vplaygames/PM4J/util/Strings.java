@@ -15,51 +15,39 @@
  */
 package com.vplaygames.PM4J.util;
 
-import java.util.StringJoiner;
-
+/**
+ * Utility methods related to Strings
+ *
+ * @author Vaibhav Nargwani
+ * @since 1.0.0
+ */
 public class Strings {
-    public static String valueOf(Throwable t) {
-        StringJoiner tor = new StringJoiner("\n").add(t.toString());
-        StackTraceElement[] stack = t.getStackTrace();
-        for (StackTraceElement ste : stack) {
-            tor.add("\tat " + ste);
-        }
-        Throwable cause = t.getCause();
-        if (cause!=null) {
-            tor.add("Caused by: "+valueOf(cause));
-        }
-        return tor.toString();
-    }
-
-    public static String alphaNumericChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
+    /**
+     * Converts the given String to an integer, ignores any non-numeric characters
+     *
+     * @param a The String to be converted
+     * @return The integer result
+     */
     public static int toInt(String a) {
-        int rtrn = 0;
-        for (int i = 0; i < a.length(); i++)
-            rtrn = rtrn * 10 + ((MiscUtil.charToInt(a.charAt(i)) == 10) ? -rtrn * 9 : MiscUtil.charToInt(a.charAt(i)));
-        return rtrn;
+        int tor = 0, i = 0;
+        while (i < a.length()) {
+            char c = a.charAt(i++);
+            tor = Character.isDigit(c) ? tor * 10 + MiscUtil.charToInt(c) : tor;
+        }
+        return a.startsWith("-") ? -tor : tor;
     }
 
-    public static boolean equalsAnyIgnoreCase(String b, String... a) {
-        boolean bool = false;
-        for (String s : a) bool = bool || (b.equalsIgnoreCase(s));
-        return bool;
-    }
-
+    /**
+     * Removes any non-alphanumeric characters from the given String
+     *
+     * @param s the String to reduce
+     * @return The String, reduced to alphanumeric characters.
+     */
     public static String reduceToAlphanumeric(String s) {
         StringBuilder tor = new StringBuilder();
-        for (int i = 0; i<s.length(); i++) {
-            if (alphaNumericChar.contains(Character.toString(s.charAt(i)))) {
-                tor.append(s.charAt(i));
-            }
-        }
+        for (char c : s.toCharArray())
+            if (Character.isLetterOrDigit(c))
+                tor.append(c);
         return tor.toString();
-    }
-
-    public static String toProperCase(String a) {
-        String[] b = a.split(" ");
-        for (int i = 0; i < b.length; i++)
-            b[i] = b[i].toUpperCase().charAt(0) + b[i].substring(1).toLowerCase();
-        return String.join(" ", b);
     }
 }

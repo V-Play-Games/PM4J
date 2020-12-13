@@ -20,13 +20,44 @@ import com.vplaygames.PM4J.caches.framework.ProcessedCache;
 import com.vplaygames.PM4J.entities.Passive;
 import com.vplaygames.PM4J.entities.Pokemon;
 import com.vplaygames.PM4J.entities.SyncGridNode;
-import com.vplaygames.PM4J.entities.TrainerData;
+import com.vplaygames.PM4J.entities.Trainer;
+import com.vplaygames.PM4J.util.Array;
 import com.vplaygames.PM4J.util.MiscUtil;
 
 import java.util.ArrayList;
 
 import static com.vplaygames.PM4J.Logger.log;
 
+/**
+ * Represents a Cache of all the Data of all the usable Passive Skills in Pokemon Masters,
+ * present in either a Sync Pair's default Passives, or present in a Sync Pair's Sync Grid.
+ * This class uses {@link com.vplaygames.PM4J.Logger} to log details of the processes.
+ * Usage example:-
+ * <pre><code>
+ *     SkillDataCache sdc;
+ *     try {
+ *         sdc = SkillDataCache.getInstance();
+ *     } catch (Exception e) {
+ *         e.printStackTrace();
+ *     }
+ *     if (sdc != null) {
+ *         // use the object
+ *     } else {
+ *         System.out.println("Data not initialized yet");
+ *     }
+ * </code></pre>
+ * This class is a Singleton Class, which means it can only be initialized once.
+ * The instance is returned by the {@link #getInstance()} and {@link #getInstance(boolean)} methods.
+ * This Cache caches the data in a {@link com.vplaygames.PM4J.caches.framework.Cache} which is an
+ * inheritor of HashMap. This class also provides other details such as processing time.
+ * See {@link ProcessedCache} for more information.
+ *
+ * @author Vaibhav Nargwani
+ * @since 1.0.0
+ * @see com.vplaygames.PM4J.caches.framework.Cache
+ * @see com.vplaygames.PM4J.caches.framework.ProcessedCache
+ * @see java.util.HashMap
+ */
 public class SkillDataCache extends ProcessedCache<SkillDataCache.Node> {
     private static volatile SkillDataCache instance;
     private Pokemon p;
@@ -39,10 +70,9 @@ public class SkillDataCache extends ProcessedCache<SkillDataCache.Node> {
         this.log = log;
         toPrint = log("Processing Skill Data.", Logger.Mode.DEBUG, getClass(), log);
         TrainerDataCache tdc = TrainerDataCache.getInstance();
-        for (int i1 = 0; i1 < tdc.DataCache.size(); i1++) {
-            TrainerData td = tdc.DataCache.get(i1);
-            for (int i2 = 0; i2 < td.pokemonData.size(); i2++) {
-                p = td.pokemonData.get(i2);
+        for (Trainer t : tdc.values()) {
+            for (int i2 = 0; i2 < t.pokemonData.size(); i2++) {
+                p = t.pokemonData.get(i2);
                 for (int i3 = 0; i3 < p.passives.size(); i3++) {
                     pass = p.passives.get(i3);
                     process(false);
@@ -88,10 +118,23 @@ public class SkillDataCache extends ProcessedCache<SkillDataCache.Node> {
         this.put(pass.name, this.get(pass.name).add(p, isGird));
     }
 
+    /**
+     * Returns the Singleton Instance and logs any processes
+     *
+     * @return the Singleton Instance and logs any processes
+     */
     public static SkillDataCache getInstance() {
         return getInstance(true);
     }
 
+    /**
+     * Returns the Singleton Instance and logs any processes if the parameter passed is true
+     *
+     * @param log to log processes or not
+     *            Note:- if this is true, the method takes the monitor of {@code System.out}
+     *            So, any other threads waiting on that monitor will be put to sleep
+     * @return the Singleton Instance and logs any processes if the parameter passed is true
+     */
     public static SkillDataCache getInstance(boolean log) {
         if (log) {
             synchronized (System.out) {
@@ -112,23 +155,35 @@ public class SkillDataCache extends ProcessedCache<SkillDataCache.Node> {
         }
     }
 
+    /** The Data Node for this Cache */
     public static class Node {
+        /** The Skill this Node contains data for. */
         public final Passive skill;
         private final ArrayList<String> inbuilt;
         private final ArrayList<String> inGrid;
 
-        public Node(Passive skill) {
+        Node(Passive skill) {
             this.skill = skill;
             inbuilt = new ArrayList<>();
             inGrid = new ArrayList<>();
         }
 
-        public Object[] getInbuilt() {
-            return inbuilt.toArray();
+        /**
+         * Returns the names of Sync Pairs who have the corresponding skill in their default Passives
+         *
+         * @return the names of Sync Pairs who have the corresponding skill in their default Passives
+         */
+        public String[] getInbuilt() {
+            return Array.toStringArray(inbuilt.toArray());
         }
 
-        public Object[] getInGrid() {
-            return inGrid.toArray();
+        /**
+         * Returns the names of Sync Pairs who have the corresponding skill in their Sync Grid
+         *
+         * @return the names of Sync Pairs who have the corresponding skill in their Sync Grid
+         */
+        public String[] getInGrid() {
+            return Array.toStringArray(inGrid.toArray());
         }
 
         Node add(Pokemon p, boolean isGrid) {
@@ -141,7 +196,7 @@ public class SkillDataCache extends ProcessedCache<SkillDataCache.Node> {
                 }
                 inGrid.add(toPut);
             } else {
-                for (String ib : inGrid) {
+                for (String ib : inbuilt) {
                     if (ib.equals(toPut)) {
                         return this;
                     }

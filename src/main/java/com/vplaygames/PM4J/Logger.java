@@ -17,17 +17,54 @@ package com.vplaygames.PM4J;
 
 import java.time.LocalTime;
 
+/**
+ * The Logger used in {@link com.vplaygames.PM4J.caches.PokemasDBCache} and all the other caches.
+ * This logger's syntax imitates SL4J's Logger's Syntax and is greatly inspired by it.
+ * The Syntax of this Logger is:-
+ * <pre><code>CURRENT_TIME [THREAD_NAME] {@link Mode LOG_MODE} CLASS_NAME - MESSAGE</code></pre>
+ *
+ * For example:-
+ * <pre><code>
+ *     13:25:43.527 [PM4J-Cache] DEBUG com.vplaygames.PM4J.caches.PokemasDBCache - Completed processing data of all the trainers
+ * </code></pre>
+ *
+ * @author Vaibhav Nargwani
+ * @since 1.0.0
+ */
 public class Logger {
+    // Private Constructor to avoid making Objects
+    private Logger() {}
+
+    /**
+     * Prepares the Logging Syntax and prints it.
+     *
+     * @param s     the message to print.
+     * @param mode  the Logger mode or Level.
+     * @param clazz the caller class.
+     * @return the Logging message printed.
+     */
     public static String log(String s, Mode mode, Class<?> clazz) {
         return log(s, mode, clazz, true);
     }
 
+    /**
+     * Prepares the Logging Syntax and prints if allowed doing so.
+     *
+     * @param s     the message to print.
+     * @param mode  the Logger mode or Level.
+     * @param clazz the caller class.
+     * @param print Whether to print the Log or not.
+     * @return the Logging message obtained from the parameters.
+     */
     public static String log(String s, Mode mode, Class<?> clazz, boolean print) {
-        String top = LocalTime.now().toString() + " ["+Thread.currentThread().getName()+"] "+mode+" " + clazz.getName() + " - " + s;
+        String top = LocalTime.now() + " [" + Thread.currentThread().getName() + "] " + mode + " " + clazz.getName() + " - " + s;
         if (print) System.out.print(top);
         return top;
     }
 
+    /**
+     * Represents a Log Mode or Level.
+     */
     public enum Mode {
         INFO, DEBUG, WARN, ERROR
     }

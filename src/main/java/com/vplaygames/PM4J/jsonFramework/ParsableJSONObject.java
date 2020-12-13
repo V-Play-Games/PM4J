@@ -15,22 +15,31 @@
  */
 package com.vplaygames.PM4J.jsonFramework;
 
-import com.vplaygames.PM4J.util.MiscUtil;
 import com.vplaygames.PM4J.exceptions.ParseException;
-import com.vplaygames.PM4J.exceptions.ValidationException;
-import org.json.simple.JSONObject;
 
+/**
+ * This class represents JSON Object parsable from a String.
+ * <br>All of this class's implementations can be parsed and stored into
+ * a {@link JSONArray} and can be directly converted into a JSON String.
+ *
+ * @author Vaibhav Nargwani
+ * @since 1.0.0
+ * @see JSONArray
+ */
 public interface ParsableJSONObject<E extends ParsableJSONObject<E>> {
+    /**
+     * Converts the current object into a JSON String.
+     *
+     * @return The JSON String for the current object.
+     */
     String getAsJSON();
 
-    default E parseFromJSON(String JSON) throws ParseException {
-        return parseFromJSON(MiscUtil.parseJSONObject(JSON));
-    }
-
-    default E parseFromJSON(JSONObject JSON) {return null;}
-
-    default void validate() throws ParseException, ValidationException {
-        if (!this.getAsJSON().equals(parseFromJSON(this.getAsJSON()).getAsJSON()))
-            throw new ValidationException();
-    }
+    /**
+     * Parses a JSON String to a Parsable JSON Object.
+     *
+     * @param JSON the JSON String to be parsed
+     * @return the object parsed.
+     * @throws ParseException if the JSON String was not a correctly formatted JSON String.
+     */
+    E parseFromJSON(String JSON) throws ParseException;
 }

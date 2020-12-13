@@ -21,17 +21,49 @@ import org.json.simple.JSONObject;
 
 import java.util.HashMap;
 
-public class SyncMove extends AbstractMove implements ParsableJSONObject<SyncMove>
+/**
+ * Represents a usable Sync Move in Pokemon Masters, which is a unique move executable by a Sync Pair
+ * due to the bond between the Trainer and the Pokemon.
+ * <br>All of this class's variables are {@code public final} i.e. available without the use of getters
+ * but not assignable.
+ * <br>This class implements the {@link ParsableJSONObject} interface, which means that it can be parsed
+ * and stored into a {@link com.vplaygames.PM4J.jsonFramework.JSONArray} and can be converted into a JSON String.
+ *
+ * @since 1.0
+ * @author Vaibhav Nargwani
+ *
+ * @see com.vplaygames.PM4J.jsonFramework.ParsableJSONObject
+ * @see com.vplaygames.PM4J.jsonFramework.JSONArray
+ */
+public class SyncMove implements ParsableJSONObject<SyncMove>
 {
+    /** The name of this move. */
+    public final String name;
+    /** The type of this move. */
+    public final String type;
+    /** The Category of this move */
+    public final String category;
+    /* The maximum power is not included as a field in this object
+     * because it is calculable by using Math.round(minPower*1.2) */
+    /** The minimum power of this move */
+    public final int minPower;
+    /** The target(s) of this move */
+    public final String target;
+    /** The effect tag of this move. */
     public final String effectTag; //a public copy of effectAtForce of AbstractMove
+    /** The additional effect(s) of this move apart from dealing damage. */
     public final String description;
 
     public SyncMove(String name, String type, String category,
                     int minPower,
                     String target, String effectTag, String description) {
-        super(name,type,category,minPower,target,effectTag);
+        this.name = name;
+        this.type = type;
+        this.category = category;
+        this.minPower = minPower;
+        this.target = target;
         this.description=description;
-        this.effectTag=this.effectAtForce;
+        this.effectTag=effectTag;
     }
 
     @Override
@@ -57,14 +89,35 @@ public class SyncMove extends AbstractMove implements ParsableJSONObject<SyncMov
     }
 
     @Override
-    public SyncMove parseFromJSON(JSONObject JSON) {
+    public SyncMove parseFromJSON(String JSON) {
         return parse(JSON);
     }
 
+    /**
+     * Parses the given <code>String</code> to a Sync Move.
+     *
+     * @param json The JSON String to be parsed.
+     *
+     * @return The Sync Move object parsed from the JSON String.
+     *
+     * @throws com.vplaygames.PM4J.exceptions.ParseException If the JSON String was incorrectly formatted.
+     * @throws ClassCastException if the required value was unable to be cast into the desired type.
+     * @throws NullPointerException if the required values were not present in the String.
+     */
     public static SyncMove parse(String json) {
         return parse(MiscUtil.parseJSONObject(json));
     }
 
+    /**
+     * Parses the given {@link JSONObject} to a Sync Move.
+     *
+     * @param jo The {@link JSONObject} to be parsed.
+     *
+     * @return The Sync Move object parsed from the JSON String.
+     *
+     * @throws ClassCastException if the required value was unable to be cast into the desired type.
+     * @throws NullPointerException if the required values were not present in the {@link JSONObject}.
+     */
     @SuppressWarnings("rawtypes")
     public static SyncMove parse(JSONObject jo) {
         String name        = (String) jo.get("name");
