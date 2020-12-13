@@ -141,7 +141,7 @@ PM4J provides you with a unique inheritor of an ArrayList. A JSONArray can only 
 
 ## Fetching Data
 To fetch data for a single trainer, follow these steps:-
-1. Construct a new [`Connection`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/Connection.java) object.
+1. Construct a new [`Connection`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/Connection.java) object.
 2. Fetch the data & store it in a String variable.
 3. Parse the data.
 4. Use the data!
@@ -248,7 +248,7 @@ if (sdc != null) {
 ```
 
 #### Note
-All the Cache classes mentioned above use the [Logger](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/Logger.java) to log details of the processes & the caches mentioned so far are Singleton Classes, which means they can be initialized only once. The Singleton Instance is returned by the `getInstance()` and `getInstance(boolean)` methods. The Caches cache the data as a [Cache](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/framework/Cache.java) which is an inheritor of HashMap. The classes also provide other details such as downloading and processing time.
+All the Cache classes mentioned above use the [Logger](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/Logger.java) to log details of the processes & the caches mentioned so far are Singleton Classes, which means they can be initialized only once. The Singleton Instance is returned by the `getInstance()` and `getInstance(boolean)` methods. The Caches cache the data as a [Cache](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/framework/Cache.java) which is an inheritor of HashMap. The classes also provide other details such as downloading and processing time.
 
 ### PokemasDB Cache
 This cache works a little different from the other caches.
@@ -258,12 +258,12 @@ This cache works a little different from the other caches.
 Note:- Other caches cannot be re-initialized directly, this is the only way to re-initialize them.
 * This cache can run the initialization parallely (in another Thread).
 * As there cannot be two types of data with the same name (like a Move having the same name as a Trainer), the Object is directly stored in the Cache without the check for duplicates.
-* The cache needs to be initialized before being used, or the [`getInstance()`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L116) method will return null.
+* The cache needs to be initialized before being used, or the [`getInstance()`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L116) method will return null.
 * The cache can be initialized by using any of the following methods:-
-  1. [`initialize()`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L125)
-  2. [`initialize(boolean)`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L134)
-  3. [`initialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L146)
-* The cache can be re-initialized by using the [`forceReinitialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/PM4J-patch/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L173)
+  1. [`initialize()`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L125)
+  2. [`initialize(boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L134)
+  3. [`initialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L146)
+* The cache can be re-initialized by using the [`forceReinitialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L173)
 
 **Example**
 ```java
