@@ -1,3 +1,7 @@
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.v-play-games/PM4J.svg?label=Maven%20Central)](https://search.maven.org/artifact/com.github.v-play-games/PM4J/1.0.0/jar)
+[![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](https://github.com/V-Play-Games/PM4J/blob/main/LICENSE)
+[![Discord](https://discord.com/api/guilds/701288438619570256/widget.png)](https://discord.gg/amvPsGU)
+
 # PM4J (Pokémon Masters For Java)
 A simple wrapper API written in Java for the RESTful API "PokeMasDB".
 
@@ -8,13 +12,14 @@ A simple wrapper API written in Java for the RESTful API "PokeMasDB".
 4. [Caches](#caches)
 5. [Download](#download)
 6. [Dependencies](#dependencies)
-7. [License](#license)
+7. [Help and Support](#help-and-support)
+8. [License](#license)
 
 ## Introduction
-PM4J (Pokémon Masters For Java) is a simple wrapper API written in Java to communicate with [PokemasDB](https://www.pokemasdb.com/). It has various Objects & Caches to work with.
+PM4J (Pokémon Masters For Java) is a simple wrapper API written in Java to communicate with [PokeMasDB](https://www.pokemasdb.com/). It has various Objects & Caches to work with.
 
 ## Entities
-Each type of data is categorized in terms of Objects or "**Entities**". All the entities have the ability to parse raw JSON data to the type of entity desired & can be stored in a [JSONArray](#json-array).
+Each type of data is categorized in terms of Objects or "[**Entities**](https://github.com/V-Play-Games/PM4J/tree/main/src/main/java/com/vplaygames/PM4J/entities)". All the entities have the ability to parse raw JSON data to the type of entity desired & can be stored in a [JSONArray](#json-array).
 1. [Move](#move)
 2. [Sync Move](#sync-move)
 3. [Passives](#passives)
@@ -134,7 +139,7 @@ Name | Description | Type
 `img` | The URL which leads to the image of this trainer on PokemasDB.  | *String*
 `data` | The URL which leads to the data of this trainer on PokemasDB.  | *String*
 `pokemon` | The Array of the names of all the Pokémon this trainer has formed a Sync Pair with. Note that this variable is not available directly but can be obtained from its getter method. | *String Array*
-`pokemonData` | The List of Pokémon this Trainer has formed a Sync Pair with. | *[JSONArray](#json-array)([Pokémon](#Pokémon))*
+`pokemonData` | The List of Pokémon this Trainer has formed a Sync Pair with. | *[JSONArray](#json-array)([Pokemon](#pokemon))*
 
 ## JSON Array
 PM4J provides you with a unique inheritor of an ArrayList. A JSONArray can only contain elements which implement the interface "PasrsableJSONObject", which all the entities implement. It can be set into an "initialized" state by calling its `initialized()` method, after which any of the values in this List cannot be changed but only inquired.
@@ -258,12 +263,12 @@ This cache works a little different from the other caches.
 Note:- Other caches cannot be re-initialized directly, this is the only way to re-initialize them.
 * This cache can run the initialization parallely (in another Thread).
 * As there cannot be two types of data with the same name (like a Move having the same name as a Trainer), the Object is directly stored in the Cache without the check for duplicates.
-* The cache needs to be initialized before being used, or the [`getInstance()`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L116) method will return null.
+* The cache needs to be initialized before being used, or the [`getInstance()`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L114) method will return null.
 * The cache can be initialized by using any of the following methods:-
-  1. [`initialize()`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L125)
-  2. [`initialize(boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L134)
-  3. [`initialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L146)
-* The cache can be re-initialized by using the [`forceReinitialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L173)
+  1. [`initialize()`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L122)
+  2. [`initialize(boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L131)
+  3. [`initialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L143)
+* The cache can be re-initialized by using the [`forceReinitialize(boolean, boolean)`](https://github.com/V-Play-Games/PM4J/blob/main/src/main/java/com/vplaygames/PM4J/caches/PokemasDBCache.java#L170)
 
 **Example**
 ```java
@@ -281,8 +286,9 @@ if (pmdc != null) {
 ```
 
 ## Download
-Latest Stable Version: **1.0.0**<br>
-Be sure to replace the VERSION key below with the version shown above!
+Latest Stable Version: [GitHub Release](https://github.com/V-Play-Games/PM4J/releases/latest)<br>
+Latest Release on Maven Central: [![Maven Central](https://img.shields.io/maven-central/v/com.github.v-play-games/PM4J.svg?label=Maven%20Central)](https://search.maven.org/artifact/com.github.v-play-games/PM4J/1.0.0/jar)<br>
+Be sure to replace the VERSION key below with one of the versions shown above!
 
 ### Maven
 ```xml
@@ -300,8 +306,7 @@ dependencies {
 }
 ```
 
-## Dependencies:
-
+## Dependencies
 This project requires **Java 8+**.<br>
 All dependencies are managed automatically by Maven.
  * JSON-Simple
@@ -312,6 +317,9 @@ All dependencies are managed automatically by Maven.
    * Version: **3.13.0**
    * [Github](https://github.com/square/okhttp)
    * [Website](https://square.github.io/okhttp/)
+
+## Help and Support
+If you want to conribute, seek help or have a query, you can contact me on Discord @V Play Games#9783 or you can [join my server](https://discord.gg/amvPsGU) & see PM4J in action.
 
 ## License
 ```
