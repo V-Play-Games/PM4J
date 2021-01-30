@@ -32,7 +32,7 @@ import java.time.LocalTime;
  * @since 1.0.0
  */
 public class Logger {
-    // Private Constructor to avoid making Objects
+    // Private Constructor to avoid making Instances
     private Logger() {}
 
     /**

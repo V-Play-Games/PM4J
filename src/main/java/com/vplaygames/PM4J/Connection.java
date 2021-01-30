@@ -19,11 +19,13 @@ import com.vplaygames.PM4J.entities.Trainer;
 import com.vplaygames.PM4J.exceptions.ConnectionClosedException;
 import com.vplaygames.PM4J.exceptions.TrainerNotFoundException;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Objects;
 
 import static com.vplaygames.PM4J.entities.Constants.TRAINER_ENDPOINT_URL;
@@ -60,13 +62,14 @@ import static com.vplaygames.PM4J.entities.Constants.TRAINER_ENDPOINT_URL;
  * @since 1.0.0
  */
 public class Connection implements Closeable {
-    private OkHttpClient client;
+    OkHttpClient client;
+    boolean useHTTPS;
 
     /**
      * Constructs a new Connection object.
      */
     public Connection() {
-        client = new OkHttpClient();
+        this(new OkHttpClient.Builder().protocols(Collections.singletonList(Protocol.HTTP_1_1)).build());
     }
 
     /**
@@ -77,6 +80,11 @@ public class Connection implements Closeable {
      *                    which will be used to communicate with the Internet.
      */
     public Connection(OkHttpClient okHttpClient) {
+        this(okHttpClient, true);
+    }
+
+    public Connection(OkHttpClient okHttpClient, boolean useHTTPS) {
+        this.useHTTPS = useHTTPS;
         client = Objects.requireNonNull(okHttpClient, "OkHttpClient cannot be null!");
     }
 
@@ -122,7 +130,7 @@ public class Connection implements Closeable {
     private Response requestData(String restOfTheURL) throws IOException {
         if (client == null)
             throw new ConnectionClosedException();
-        return client.newCall(new Request.Builder().url(TRAINER_ENDPOINT_URL+restOfTheURL).build()).execute();
+        return client.newCall(new Request.Builder().url("http"+TRAINER_ENDPOINT_URL.substring(4+(useHTTPS?0:1))+restOfTheURL).build()).execute();
     }
 
     @Override

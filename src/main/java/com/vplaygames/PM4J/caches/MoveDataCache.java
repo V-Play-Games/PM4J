@@ -19,8 +19,7 @@ import com.vplaygames.PM4J.Logger;
 import com.vplaygames.PM4J.caches.framework.ProcessedCache;
 import com.vplaygames.PM4J.entities.Move;
 import com.vplaygames.PM4J.entities.Pokemon;
-import com.vplaygames.PM4J.entities.Trainer;
-import com.vplaygames.PM4J.util.Array;
+import com.vplaygames.PM4J.util.BranchedPrintStream;
 import com.vplaygames.PM4J.util.MiscUtil;
 
 import java.util.ArrayList;
@@ -54,81 +53,64 @@ import java.util.ArrayList;
  * @see com.vplaygames.PM4J.caches.framework.ProcessedCache
  * @see java.util.HashMap
  */
-public class MoveDataCache extends ProcessedCache<MoveDataCache.Node> {
+public class MoveDataCache extends DataCache<MoveDataCache, MoveDataCache.Node> {
     private static volatile MoveDataCache instance;
 
-    private MoveDataCache(boolean log) {
-        super();
-        String toPrint = "";
+    private MoveDataCache() {}
+
+    protected void process0() {
+        boolean log = settings.getLogPolicy();
+        BranchedPrintStream bps = settings.getLogOutputStream();
+        String[] toPrint = {""};
         TrainerDataCache tdc = TrainerDataCache.getInstance();
-        for (Trainer t : tdc.values()) {
-            for (Pokemon p : t.pokemonData) {
-                for (Move m : p.moves) {
-                    if (!this.containsKey(m.name)) {
-                        this.put(m.name, new Node(m));
-                    }
-                    this.put(m.name, this.get(m.name).add(p));
-                    if (log) {
-                        System.out.print(MiscUtil.backspace(toPrint.length()) + (toPrint = Logger.log("Processed "+t.name + "'s " + p.name + "'s " + m.name + "'s data.", Logger.Mode.DEBUG, getClass(), false)));
-                    }
-                }
+        tdc.forEach((trainerName, trainer) -> trainer.pokemonData.forEach(pokemon -> pokemon.moves.forEach(move -> {
+            computeIfAbsent(move.name, name -> new Node(move));
+            get(move.name).add(pokemon);
+            if (log) {
+                bps.print(MiscUtil.backspace(toPrint[0].length()) + (toPrint[0] = Logger.log("Processed "+trainerName + "'s " + pokemon.name + "'s " + move.name + "'s data.", Logger.Mode.DEBUG, getClass(), false)));
             }
-        }
-        if (log) System.out.println(MiscUtil.backspace(toPrint.length())+Logger.log("Processed "+"data for all Moves.", Logger.Mode.DEBUG, getClass(), false));
+        })));
+        if (log) bps.println(MiscUtil.backspace(toPrint[0].length())+Logger.log("Processed data for all Moves.", Logger.Mode.DEBUG, getClass(), false));
         processed(tdc.getTotalProcessed());
         initialized();
     }
 
     /**
-     * Returns the Singleton Instance and logs any processes
+     * Returns the Singleton Instance
      *
-     * @return the Singleton Instance and logs any processes
+     * @return the Singleton Instance
      */
     public static MoveDataCache getInstance() {
-        return getInstance(true);
+        return instance == null ? instance = new MoveDataCache() : instance;
     }
 
     /**
-     * Returns the Singleton Instance and logs any processes if the parameter passed is true
+     * In version 1.0.0, this method was used to construct the Singleton Instance
+     * and turned on/off logging depending on the {@code log} parameter.
      *
-     * @param log to log processes or not
-     *            Note:- if this is true, the method takes the monitor of {@code System.out}
-     *            So, any other threads waiting on that monitor will be put to sleep
-     * @return the Singleton Instance and logs any processes if the parameter passed is true
+     * This method is now {@link Deprecated} because whether logging should be done
+     * or not can be set in the {@link com.vplaygames.PM4J.Settings} and the Singleton Instance
+     * is now constructed by the {@link #getInstance()} and initialized by
+     * {@link #process()} method.
+     * @param log whether turn on logging or not.
+     * @return the Singleton Instance.
+     * @deprecated
      */
+    @Deprecated
     public static MoveDataCache getInstance(boolean log) {
-        if (log) {
-            synchronized (System.out) {
-                return instance != null ? instance : (instance = new MoveDataCache(true));
-            }
-        } else {
-            return instance != null ? instance : (instance = new MoveDataCache(false));
-        }
+        return getInstance().useSettings(instance.settings.setLogPolicy(log));
     }
 
-    static MoveDataCache forceReinitialize(boolean log) {
-        if (log) {
-            synchronized (System.out) {
-                return instance = new MoveDataCache(true);
-            }
-        } else {
-            return instance = new MoveDataCache(false);
-        }
-    }
-
-    /** The Data Node for this Cache */
+    /** The Data Node for MoveDataCache */
     public static class Node {
         /** The Move this Node contains data for. */
         public final Move move;
-        private final ArrayList<String> users;
-        private final ArrayList<String> userPokemonNames;
-        private final ArrayList<String> userTrainerNames;
+        private final ArrayList<String> users            = new ArrayList<>();
+        private final ArrayList<String> userPokemonNames = new ArrayList<>();
+        private final ArrayList<String> userTrainerNames = new ArrayList<>();
 
         Node(Move move) {
             this.move = move;
-            users = new ArrayList<>();
-            userPokemonNames = new ArrayList<>();
-            userTrainerNames = new ArrayList<>();
         }
 
         /**
@@ -137,7 +119,7 @@ public class MoveDataCache extends ProcessedCache<MoveDataCache.Node> {
          * @return the names of Sync Pairs who can use the corresponding move
          */
         public String[] getUsers() {
-            return Array.toStringArray(users.toArray());
+            return users.toArray(new String[0]);
         }
 
         /**
@@ -146,7 +128,7 @@ public class MoveDataCache extends ProcessedCache<MoveDataCache.Node> {
          * @return the names of Pokemon who can use the corresponding move
          */
         public String[] getUserPokemonNames() {
-            return Array.toStringArray(userPokemonNames.toArray());
+            return userPokemonNames.toArray(new String[0]);
         }
 
         /**
@@ -155,7 +137,7 @@ public class MoveDataCache extends ProcessedCache<MoveDataCache.Node> {
          * @return the names of Trainers who can use the corresponding move
          */
         public String[] getUserTrainerNames() {
-            return Array.toStringArray(userTrainerNames.toArray());
+            return userTrainerNames.toArray(new String[0]);
         }
 
         /**
@@ -163,7 +145,7 @@ public class MoveDataCache extends ProcessedCache<MoveDataCache.Node> {
          *
          * @return this instance. Useful for chaining.
          */
-        Node add(Pokemon p) {
+        public Node add(Pokemon p) {
             int len = users.size();
             userTrainerNames.add(len, p.trainer);
             userPokemonNames.add(len, p.name);

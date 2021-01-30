@@ -20,6 +20,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Objects;
+
 /**
  * Other Utility methods
  *
@@ -28,10 +32,9 @@ import org.json.simple.parser.JSONParser;
  */
 public class MiscUtil {
     /**
-     * Formats the given amount of milliseconds to String
-     * for example:-
-     * Input: 145679
-     * Output: 2m 15s 679ms
+     * Formats the given amount of milliseconds to String.
+     * Sample Input: 145679
+     * Sample Output: 2m 15s 679ms
      *
      * @param ms The amount of milliseconds
      * @return the formatted String
@@ -62,9 +65,8 @@ public class MiscUtil {
 
     /**
      * Formats the given amount of bytes to String
-     * for example:-
-     * Input: 1048576
-     * Output: 2.0 MB
+     * Sample Input: 1048576
+     * Sample Output: 2.0 MB
      *
      * @param bytes The amount of milliseconds
      * @return the formatted String
@@ -142,7 +144,7 @@ public class MiscUtil {
      * @return The resultant String of the given length.
      */
     public static String doubleToString(int len, Double num) {
-        String tor = num.toString();
+        String tor = Objects.requireNonNull(num).toString();
         tor=tor.substring(0,Math.min(tor.length(),len));
         while (tor.length()<len)
             tor=tor.concat("0");
@@ -181,5 +183,20 @@ public class MiscUtil {
             throw new ParseException();
         }
         return ja;
+    }
+
+    public static void lockAll(BranchedPrintStream stream, Runnable action) {
+        lock(new ArrayList<>(stream.getPrintStreams()), action, 0);
+    }
+
+    private static void lock(ArrayList<PrintStream> streams, Runnable action, int index) {
+        if (index<streams.size()) {
+            synchronized (streams.get(index)) {
+                lock(streams, action, ++index);
+                if (index==streams.size()) {
+                    action.run();
+                }
+            }
+        }
     }
 }

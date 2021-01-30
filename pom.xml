@@ -8,9 +8,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <name>PM4J</name>
+    <description>This is a simple wrapper API written in Java for the RESTful API "PokeMasDB"</description>
+    <url>https://github.com/V-Play-Games/PM4J</url>
+
     <groupId>com.github.v-play-games</groupId>
     <artifactId>PM4J</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0a-SNAPSHOT</version>
     <inceptionYear>2020</inceptionYear>
     <build>
         <plugins>
@@ -64,6 +68,17 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <version>1.6.7</version>
@@ -77,10 +92,6 @@
         </plugins>
     </build>
 
-    <name>PM4J</name>
-    <description>This is a simple wrapper API written in Java for the RESTful API "PokeMasDB"</description>
-    <url>https://github.com/V-Play-Games/PM4J</url>
-
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -92,8 +103,8 @@
         <developer>
             <name>Vaibhav Nargwani</name>
             <email>vaibhavnargwani28@gmail.com</email>
-            <organization>com.vplaygames</organization>
-            <organizationUrl>https://github.com/V-Play-Games/PM4J</organizationUrl>
+            <organization>com.github.vplaygames</organization>
+            <organizationUrl>https://github.com/V-Play-Games/</organizationUrl>
         </developer>
     </developers>
 

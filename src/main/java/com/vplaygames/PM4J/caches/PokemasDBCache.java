@@ -15,12 +15,9 @@
  */
 package com.vplaygames.PM4J.caches;
 
-import com.vplaygames.PM4J.caches.framework.DownloadedCache;
+import com.vplaygames.PM4J.caches.framework.Cache;
 import com.vplaygames.PM4J.caches.framework.ProcessedCache;
-
-import static com.vplaygames.PM4J.Logger.Mode.INFO;
-import static com.vplaygames.PM4J.Logger.log;
-import static com.vplaygames.PM4J.util.MiscUtil.*;
+import com.vplaygames.PM4J.util.Queueable;
 
 /**
  * Represents a Cache of any type of Data in Pokemon Masters (Pokemon, Moves, Skills, Trainers).
@@ -64,125 +61,68 @@ import static com.vplaygames.PM4J.util.MiscUtil.*;
  * @see com.vplaygames.PM4J.caches.framework.ProcessedCache
  * @see java.util.HashMap
  */
-public class PokemasDBCache extends DownloadedCache<Object> {
+public class PokemasDBCache extends DataCache<PokemasDBCache, Object> {
     private static volatile PokemasDBCache instance;
-    private static volatile boolean initializing = false;
-    private static volatile boolean initialized = false;
 
-    private PokemasDBCache(boolean log, boolean isForced) {
-        initializing = true;
-        TrainerDataCache tdc;
-        PokemonDataCache pdc;
-        MoveDataCache mdc;
-        SkillDataCache sdc;
-        if (isForced) {
-            tdc = TrainerDataCache.forceReinitialize(log);
-            pdc = PokemonDataCache.forceReinitialize(log);
-            mdc = MoveDataCache.forceReinitialize(log);
-            sdc = SkillDataCache.forceReinitialize(log);
-        } else {
-            tdc = TrainerDataCache.getInstance(log);
-            pdc = PokemonDataCache.getInstance(log);
-            mdc = MoveDataCache.getInstance(log);
-            sdc = SkillDataCache.getInstance(log);
-        }
-        putAll(tdc);
-        putAll(pdc);
-        putAll(mdc);
-        putAll(sdc);
-        totalDownloaded = tdc.getTotalDownloaded();
-        downloadingTime = tdc.getDownloadingTime();
-        totalProcessed = tdc.getTotalProcessed();
-        processingTime = tdc.getProcessingTime() + pdc.getProcessingTime() + mdc.getProcessingTime() + sdc.getProcessingTime();
-        Class<?> clazz = getClass();
-        log("Successfully finished processing of all the data.\n", INFO, clazz);
-        if (log) {
-            String pSpeed = bytesToString(getProcessingSpeed()) + "/sec";
-            String dSpeed = bytesToString(getDownloadingSpeed()) + "/sec";
-            pSpeed += space(dSpeed.length() - pSpeed.length());
-            dSpeed += space(pSpeed.length() - dSpeed.length());
-            log("Took " + msToString(downloadingTime + processingTime) + ".\n", INFO, clazz);
-            log("Process  - Speed: " + pSpeed + " Time: " + msToString(processingTime) + ".\n", INFO, clazz);
-            log("Download - Speed: " + dSpeed + " Time: " + msToString(downloadingTime) + ".\n", INFO, clazz);
-            log("Downloaded " + bytesToString(totalDownloaded * 2) + " of data.\n", INFO, clazz);
-        }
-        initializing = false;
-        initialized = true;
+    protected PokemasDBCache() {}
+
+    public Queueable<PokemasDBCache> downloadData() {
+        return queueProcess(TrainerDataCache.getInstance());
+    }
+
+    public Queueable<PokemasDBCache> processPokemon() {
+        return queueProcess(PokemonDataCache.getInstance());
+    }
+
+    public Queueable<PokemasDBCache> processMoves() {
+        return queueProcess(MoveDataCache.getInstance());
+    }
+
+    public Queueable<PokemasDBCache> processSkills() {
+        return queueProcess(SkillDataCache.getInstance());
+    }
+
+    private Queueable<PokemasDBCache> queueProcess(DataCache<?,?> cache) {
+        return new Queueable<>(() -> cache.useSettings(settings).process().getTask().run(), this);
+    }
+
+    protected void process0() {
+        downloadData().getTask().run();
+        processPokemon().getTask().run();
+        processMoves().getTask().run();
+        processSkills().getTask().run();
     }
 
     /**
-     * Returns the Singleton Instance, which is null if not initialized
+     * Returns the Singleton Instance
      *
-     * @return the Singleton Instance, which is null if not initialized
+     * @return the Singleton Instance
      */
     public static PokemasDBCache getInstance() {
-        return instance;
+        return instance == null ? instance = new PokemasDBCache() : instance;
     }
 
-    /**
-     * Initializes the Singleton Instance, logs any processes
-     * and does not create a new Thread for the process
-     */
-    public static void initialize() {
-        if (!initialized)
-            initialize(true);
-    }
+    /** @deprecated */
+    @Deprecated
+    public static void initialize() {}
 
-    /**
-     * Initializes the Singleton Instance,
-     * logs any processes if the {@code log} parameter is {@code true}
-     * and does not create a new Thread for the process
-     *
-     * @param log to log processes or not
-     */
-    public static void initialize(boolean log) {
-        if (!initialized)
-            initialize(log, false);
-    }
+    /** @deprecated */
+    @Deprecated
+    public static void initialize(boolean log) {}
 
-    /**
-     * Initializes the Singleton Instance,
-     * logs any processes if the {@code log} parameter is {@code true}
-     * and creates a new Thread for the process if the {@code runInParallel} parameter is {@code true}
-     *
-     * @param log to log processes or not
-     * @param runInParallel to create a new Thread for the process or not
-     */
-    public static void initialize(boolean log, boolean runInParallel) {
-        if (!initialized)
-            initialize(log, runInParallel, false);
-    }
+    /** @deprecated */
+    @Deprecated
+    public static void initialize(boolean log, boolean runInParallel) {}
 
-    private static void initialize(boolean log, boolean runInParallel, boolean isForced) {
-        if (initialized || initializing) return;
-        try {
-            if (runInParallel)
-                new Thread(() -> PokemasDBCache.initialize0(log, isForced), "PM4J-Cache").start();
-            else
-                initialize0(log, isForced);
-        } catch (Throwable t) {
-            initializing = false;
-            initialized = false;
-            throw t;
-        }
-    }
+    /** @deprecated */
+    @Deprecated
+    public static void forceReinitialize(boolean log, boolean runInParallel) {}
 
-    /**
-     * Re-Initializes the Singleton Instance,
-     * logs any processes if the {@code log} parameter is {@code true}
-     * and creates a new Thread for the process if the {@code runInParallel} parameter is {@code true}
-     *
-     * @param log to log processes or not
-     * @param runInParallel to create a new Thread for the process or not
-     */
-    public static void forceReinitialize(boolean log, boolean runInParallel) {
-        initializing = false;
-        initialized = false;
-        initialize(log, runInParallel, true);
-    }
-
-    private static void initialize0(boolean log, boolean isForced) {
-        if (instance == null)
-            instance = new PokemasDBCache(log, isForced);
+    public Queueable<PokemasDBCache> invalidateCaches() {
+        return new Queueable<>(() -> {
+            for (Cache.Type type : Cache.Type.values()) {
+                type.getCache().invalidateCache();
+            }
+        }, this);
     }
 }

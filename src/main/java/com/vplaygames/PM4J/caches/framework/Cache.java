@@ -99,9 +99,9 @@ public class Cache<T> extends HashMap<String, T> {
         UNKNOWN("", PokemasDBCache.getInstance());
 
         private final String value;
-        private final Cache<?> cache;
+        private final DataCache<?,?> cache;
 
-        Type(String value, Cache<?> cache) {
+        Type(String value, DataCache<?,?> cache) {
             this.value = value;
             this.cache = cache;
         }
@@ -116,7 +116,7 @@ public class Cache<T> extends HashMap<String, T> {
          *
          * @return the type of Cache being referred by this Type.
          */
-        public Cache<?> getCache() {
+        public DataCache<?,?> getCache() {
             return cache;
         }
 

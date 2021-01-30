@@ -75,6 +75,7 @@ public class JSONArray<E extends ParsableJSONObject<E>> extends ArrayList<E> imp
      * </ul>
      * If any of the aforementioned methods are called after
      * this method is called, then {@linkplain IllegalStateException IllegalStateException} is thrown.
+     *
      * @return This instance. Useful for chaining and assigning.
      */
     public JSONArray<E> initialized() {
@@ -86,12 +87,12 @@ public class JSONArray<E extends ParsableJSONObject<E>> extends ArrayList<E> imp
      * Parses the given {@link org.json.simple.JSONArray} to a JSON Array of the same type
      * as the <code>element</code>.
      *
-     * @param ja  The {@link org.json.simple.JSONArray} to be parsed.
-     * @param <E> The type parameter of the JSON Array to be returned.
+     * @param ja      The {@link org.json.simple.JSONArray} to be parsed.
+     * @param <E>     The type parameter of the JSON Array to be returned.
      * @param element The type of elements for the resulting JSONArray to have
      * @return The JSONArray object.
-     * @throws com.vplaygames.PM4J.exceptions.ParseException if the JSON Object was unable to be parsed.
-     * @throws NullPointerException                          if there were null value(s) were passed.
+     * @throws ParseException       if the JSON Object was unable to be parsed.
+     * @throws NullPointerException if there were null value(s) were passed.
      */
     public static <E extends ParsableJSONObject<E>>
     JSONArray<E> parse(org.json.simple.JSONArray ja, E element) {
@@ -144,79 +145,83 @@ public class JSONArray<E extends ParsableJSONObject<E>> extends ArrayList<E> imp
 
     @Override
     public E set(int index, E element) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.set(index, element);
     }
 
     @Override
     public boolean add(E e) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.add(e);
     }
 
     @Override
     public void add(int index, E element) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         super.add(index, element);
     }
 
     @Override
     public E remove(int index) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.remove(index);
     }
 
     @Override
     public boolean remove(Object o) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.remove(o);
     }
 
     @Override
     public void clear() {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         super.clear();
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.addAll(c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.addAll(index, c);
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.removeAll(c);
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.retainAll(c);
     }
 
     @Override
     public boolean removeIf(Predicate<? super E> filter) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         return super.removeIf(filter);
     }
 
     @Override
     public void replaceAll(UnaryOperator<E> operator) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         super.replaceAll(operator);
     }
 
     @Override
     public void sort(Comparator<? super E> c) {
-        if (initialized) throw new IllegalStateException();
+        checkAccess();
         super.sort(c);
+    }
+
+    private void checkAccess() {
+        if (initialized) throw new IllegalStateException();
     }
 }

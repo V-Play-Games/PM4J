@@ -27,6 +27,7 @@ package com.vplaygames.PM4J.caches.framework;
  * @see ProcessedCache
  * @see java.util.HashMap
  */
+@Deprecated
 public class DownloadedCache<T> extends ProcessedCache<T> {
     protected long totalDownloaded = 0;
     protected long downloadingTime = 0;

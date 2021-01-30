@@ -18,12 +18,10 @@ package com.vplaygames.PM4J.caches;
 import com.vplaygames.PM4J.caches.framework.ProcessedCache;
 import com.vplaygames.PM4J.entities.Constants;
 import com.vplaygames.PM4J.entities.Pokemon;
-import com.vplaygames.PM4J.entities.Trainer;
 import com.vplaygames.PM4J.jsonFramework.JSONArray;
 import com.vplaygames.PM4J.util.Array;
+import com.vplaygames.PM4J.util.BranchedPrintStream;
 import com.vplaygames.PM4J.util.MiscUtil;
-
-import java.util.Set;
 
 import static com.vplaygames.PM4J.Logger.Mode.DEBUG;
 import static com.vplaygames.PM4J.Logger.log;
@@ -58,51 +56,42 @@ import static com.vplaygames.PM4J.Logger.log;
  * @see com.vplaygames.PM4J.caches.framework.ProcessedCache
  * @see java.util.HashMap
  */
-public class PokemonDataCache extends ProcessedCache<JSONArray<Pokemon>> {
+public class PokemonDataCache extends DataCache<PokemonDataCache, JSONArray<Pokemon>> {
     private static volatile PokemonDataCache instance;
 
-    private PokemonDataCache(boolean log) {
-        super();
-        String toPrint = "";
+    private PokemonDataCache() {}
+
+    protected void process0() {
+        boolean log = settings.getLogPolicy();
+        BranchedPrintStream bps = settings.getLogOutputStream();
+        String[] toPrint = {""};
         TrainerDataCache tdc = TrainerDataCache.getInstance();
-        for (Trainer t : tdc.values()) {
-            for (Pokemon p : t.pokemonData) {
-                if (!this.containsKey(p.name)) {
-                    this.put(p.name, new JSONArray<>(0, Constants.EMPTY_POKEMON));
-                }
-                JSONArray<Pokemon> result = this.get(p.name);
-                result.add(p);
-                this.put(p.name, result);
+        tdc.forEach((trainerName, trainer) -> trainer.pokemonData.forEach(pokemon -> {
+            computeIfAbsent(pokemon.name, name -> new JSONArray<>(0, Constants.EMPTY_POKEMON));
+            get(pokemon.name).add(pokemon);
+            if (log) {
+                bps.print(MiscUtil.backspace(toPrint[0].length()) + (toPrint[0] = log("Categorized " + trainerName + "'s " + pokemon.name + "'s data.", DEBUG, getClass(), false)));
+            }
+        }));
+        keySet().forEach(name1 -> keySet().forEach(name2 -> {
+            if (name2.contains(name1)                                     // check if it's a form of the given pokemon
+                && !name2.equals(name1)                                   // check if it's not the same pokemon; saves from duplicates
+                // other exceptions
+                && !Array.contains(name2, tdc.get("Player").getPokemon()) // the player has absurd amounts of duplicates
+                && !name1.equals("Mew"))                                  // saves Mew from being included under Mewtwo's Category
+            {
+                JSONArray<Pokemon> result = get(name2);
+                result.addAll(get(name1));
+                put(name1, result);
+                put(name2, result);
                 if (log) {
-                    System.out.print(MiscUtil.backspace(toPrint.length()) + (toPrint = log("Categorized " + t.name + "'s " + p.name + "'s data.", DEBUG, getClass(), false)));
+                    bps.print(MiscUtil.backspace(toPrint[0].length()) + (toPrint[0] = log("Categorized " + name1 + " into " + name2 + "'s data.", DEBUG, getClass(), false)));
                 }
             }
-        }
-
-        Set<String> keys = this.keySet();
-
-        for (String name1 : keys) {
-            for (String name2 : keys) {
-                if (name2.contains(name1)                                         // check if it's a form of the given pokemon
-                        && !name2.equals(name1)                                   // check if it's not the same pokemon; saves from duplicates
-                        // other exceptions
-                        && !Array.contains(name2, tdc.get("Player").getPokemon()) // the player has absurd amounts of duplicates
-                        && !name1.equals("Mew")) {                                // saves Mew from being included under Mewtwo's Category
-                    JSONArray<Pokemon> result = this.get(name2);
-                    result.addAll(this.get(name1));
-                    this.put(name1, result);
-                    this.put(name2, result);
-                    if (log) {
-                        System.out.print(MiscUtil.backspace(toPrint.length()) + (toPrint = log("Categorized " + name1 + " into " + name2 + "'s data.", DEBUG, getClass(), false)));
-                    }
-                }
-            }
-        }
-
-        for (String key : keys) {
-            get(key).initialized();
-        }
-        if (log) System.out.println(MiscUtil.backspace(toPrint.length()) + log("Categorized data for all Pokemon.", DEBUG, getClass(), false));
+        }));
+        values().forEach(JSONArray::initialized);
+        if (log)
+            bps.println(MiscUtil.backspace(toPrint[0].length()) + log("Categorized data for all Pokemon.", DEBUG, getClass(), false));
         processed(tdc.getTotalProcessed());
         initialized();
     }
@@ -113,34 +102,23 @@ public class PokemonDataCache extends ProcessedCache<JSONArray<Pokemon>> {
      * @return the Singleton Instance and logs any processes
      */
     public static PokemonDataCache getInstance() {
-        return getInstance(true);
+        return instance == null ? instance = new PokemonDataCache() : instance;
     }
 
     /**
-     * Returns the Singleton Instance and logs any processes if the parameter passed is true
+     * In version 1.0.0, this method was used to construct the Singleton Instance
+     * and turned on/off logging depending on the {@code log} parameter.
      *
-     * @param log to log processes or not
-     *            Note:- if this is true, the method takes the monitor of {@code System.out}
-     *            So, any other threads waiting on that monitor will be put to sleep
-     * @return the Singleton Instance and logs any processes if the parameter passed is true
+     * This method is now {@link Deprecated} because whether logging should be done
+     * or not can be set in the {@link com.vplaygames.PM4J.Settings} and the Singleton Instance
+     * is now constructed by the {@link #getInstance()} and initialized by
+     * {@link #process()} method.
+     * @param log whether turn on logging or not.
+     * @return the Singleton Instance.
+     * @deprecated
      */
+    @Deprecated
     public static PokemonDataCache getInstance(boolean log) {
-        if (log) {
-            synchronized (System.out) {
-                return instance != null ? instance : (instance = new PokemonDataCache(true));
-            }
-        } else {
-            return instance != null ? instance : (instance = new PokemonDataCache(false));
-        }
-    }
-
-    static PokemonDataCache forceReinitialize(boolean log) {
-        if (log) {
-            synchronized (System.out) {
-                return instance = new PokemonDataCache(true);
-            }
-        } else {
-            return instance = new PokemonDataCache(false);
-        }
+        return getInstance().useSettings(instance.settings.setLogPolicy(log));
     }
 }
