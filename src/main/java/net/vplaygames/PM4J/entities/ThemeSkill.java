@@ -147,9 +147,8 @@ public class ThemeSkill implements JSONable {
          *
          * @param json The JSON String to be parsed
          * @return The Theme Skill Effect object parsed from the JSON String
-         * @throws net.vplaygames.PM4J.exceptions.ParseException if the JSON String was incorrectly formatted
-         * @throws ClassCastException                            if the required value was unable to be cast into the desired type
-         * @throws NullPointerException                          if the required values were not present in the String
+         * @throws ClassCastException   if the required value was unable to be cast into the desired type
+         * @throws NullPointerException if the required values were not present in the String
          */
         public static ThemeSkill.Effect parse(String json) {
             return parse(JSONValue.parse(json));
