@@ -103,7 +103,7 @@ public class Cache<T> extends HashMap<String, T> {
          * @param toParse the String to Parse.
          * @return the Type of Cache detected, {@link Type#UNKNOWN} if none detected.
          */
-        public static Type parseType(String toParse) {
+        public static Type of(String toParse) {
             switch (toParse.toLowerCase()) {
                 case "trainer": return TRAINER;
                 case "pokemon": return POKEMON;
@@ -121,7 +121,7 @@ public class Cache<T> extends HashMap<String, T> {
          * @return true if the given String parses to any type except {@link Type#UNKNOWN}, false otherwise
          */
         public static boolean isType(String toParse) {
-            return parseType(toParse) != UNKNOWN;
+            return of(toParse) != UNKNOWN;
         }
     }
 }

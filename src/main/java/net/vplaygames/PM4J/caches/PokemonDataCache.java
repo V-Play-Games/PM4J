@@ -17,7 +17,7 @@ package net.vplaygames.PM4J.caches;
 
 import net.vplaygames.PM4J.entities.Pokemon;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a Cache of all the Data of all the usable Pokemon in Pokemon Masters
@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @see Cache
  * @see java.util.HashMap
  */
-public class PokemonDataCache extends Cache<ArrayList<Pokemon>> {
+public class PokemonDataCache extends Cache<List<Pokemon>> {
     private static volatile PokemonDataCache instance;
 
     private PokemonDataCache() {}

@@ -19,6 +19,7 @@ import net.vplaygames.PM4J.entities.Passive;
 import net.vplaygames.PM4J.entities.Pokemon;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a Cache of all the Data of all the usable Passive Skills in Pokemon Masters,
@@ -57,14 +58,12 @@ public class SkillDataCache extends Cache<SkillDataCache.Node> {
         /** The Skill for which this Node contains data for. */
         public final Passive skill;
         /** The names of Sync Pairs who have the corresponding skill in their default Passives. */
-        public final HashSet<Pokemon> inbuilt;
+        public final Set<Pokemon> inbuilt = new HashSet<>();
         /** The names of Sync Pairs who have the corresponding skill in their Sync Grid. */
-        public final HashSet<Pokemon> inGrid;
+        public final Set<Pokemon> inGrid = new HashSet<>();
 
         public Node(Passive skill) {
             this.skill = skill;
-            inbuilt = new HashSet<>();
-            inGrid = new HashSet<>();
         }
 
         /**

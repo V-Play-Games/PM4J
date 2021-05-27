@@ -96,11 +96,6 @@ public class Move implements JSONable {
             "}";
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
     /**
      * Parses the given {@code String} to a Move
      *

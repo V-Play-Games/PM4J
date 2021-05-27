@@ -9,6 +9,9 @@ import java.util.StringJoiner;
  * @since 1.1.0
  */
 public class Util {
+    // private constructor to disable instances.
+    private Util() {}
+
     /**
      * Formats the given {@code String} Array into a String with the given delimiter
      *

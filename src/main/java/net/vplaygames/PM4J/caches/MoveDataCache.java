@@ -19,6 +19,7 @@ import net.vplaygames.PM4J.entities.Move;
 import net.vplaygames.PM4J.entities.Pokemon;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a Cache of all the Data of all the usable Moves in Pokemon Masters.
@@ -56,7 +57,7 @@ public class MoveDataCache extends Cache<MoveDataCache.Node> {
         /** The Move this Node contains data for. */
         public final Move move;
         /** The list of Pokemon who can use the corresponding move */
-        public final ArrayList<Pokemon> users = new ArrayList<>();
+        public final List<Pokemon> users = new ArrayList<>();
 
         public Node(Move move) {
             this.move = move;
