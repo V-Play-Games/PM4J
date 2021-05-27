@@ -1,5 +1,5 @@
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.v-play-games/PM4J.svg?label=Maven%20Central)](https://search.maven.org/artifact/com.github.v-play-games/PM4J/1.0.0/jar)
-[![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](https://github.com/V-Play-Games/PM4J/blob/main/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.v-play-games/PM4J.svg?label=Maven%20Central)](https://search.maven.org/artifact/com.github.v-play-games/PM4J/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Discord](https://discord.com/api/guilds/701288438619570256/widget.png)](https://discord.gg/amvPsGU)
 
 # PM4J (Pokémon Masters For Java)
