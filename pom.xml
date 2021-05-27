@@ -9,12 +9,12 @@
     </properties>
 
     <name>PM4J</name>
-    <description>This is a simple wrapper API written in Java for the RESTful API "PokeMasDB"</description>
+    <description>This is a simple wrapper API written in Java for the REST API "PokeMasDB"</description>
     <url>https://github.com/V-Play-Games/PM4J</url>
 
     <groupId>com.github.v-play-games</groupId>
     <artifactId>PM4J</artifactId>
-    <version>1.1.0a-SNAPSHOT</version>
+    <version>1.1.0</version>
     <inceptionYear>2020</inceptionYear>
     <build>
         <plugins>
@@ -103,7 +103,7 @@
         <developer>
             <name>Vaibhav Nargwani</name>
             <email>vaibhavnargwani28@gmail.com</email>
-            <organization>com.github.vplaygames</organization>
+            <organization>com.github.v-play-games</organization>
             <organizationUrl>https://github.com/V-Play-Games/</organizationUrl>
         </developer>
     </developers>
@@ -127,15 +127,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <groupId>com.github.v-play-games</groupId>
+            <artifactId>vjson</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.13.0</version>
+            <version>[3.13.0,)</version>
         </dependency>
     </dependencies>
-
 </project>
