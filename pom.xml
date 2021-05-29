@@ -14,7 +14,7 @@
 
     <groupId>com.github.v-play-games</groupId>
     <artifactId>PM4J</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.0-beta</version>
     <inceptionYear>2020</inceptionYear>
     <build>
         <plugins>
